@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="icon" href="{{url_for('static', filename='Web_Client.ico')}}" />
+        <title>
+            My app
+        </title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <!-- CSS Bootstrap -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    </head>
+    <body>
+        <img height="100%" width="100%" src="{{url_for('static', filename='business_login_bs_banner.svg')}}">
+
+        <div class="block">
+            <div style="padding: 2%;font-weight: bold;text-align: center;">INTRUSION</div>
+            <p style="clear:left;text-align: center;" id="intrusion">""</p>
+        </div>
+
+        <div class="block">
+            <div style="padding: 2%;font-weight: bold;text-align: center;">TOTAL RAISED</div>
+            <p style="clear:left;text-align: center;" id="raised">""</p>
+        </div>
+
+        <div class="block">
+            <div style="padding: 2%;font-weight: bold;text-align: center;">CAMERA FAULT</div>
+            <p style="clear:left;text-align: center;" id="camerafault">""</p>
+        </div>    
+
+        <div style="padding: 2%;">
+            <input type="text" id="myInput" onkeyup="searchFunction()" placeholder="Search for camera.." title="Type in a name">
+        </div>
+
+        <!-- <form method="POST">
+
+            <select name= 'cameras' id='camerass'>
+                <option value="ALL">ALL</option>
+                <option value="Camera1">Camera1</option>
+                <option value="Camera2">Camera2</option>
+                <option value="Camera3">Camera3</option>
+             </select>
+           <input type="submit" value="Submit" id="submit">
+        </form> -->
+
+        <div style="clear: left;" class="jango">
+            <div id="jango">
+                ""
+            </div>
+        </div>
+        <!-- <input type="text" id="hiInput" onkeyup="myFunction()" placeholder="myFunction.." title="Type in a name"> -->
+    </body>
+</html>
+
+
+<style>
+    .block {background-color:silver;padding: auto;width: 10%;float:left;margin: 2%;border-radius: 10%;}
+</style>    
+
+
+<!-- SCRIPT -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+
+<script>
+    
+    $(function(){
+        window.setInterval(function(){
+            update(),myFunction()
+        },1000)
+    var sel=document.getElementById('camerass').selectedOptions[0].value;
+    console.log(sel)
+    function update(){
+        $.ajax({
+            url:"/update",
+            type:"POST",
+            data:{'selection':sel},
+            dataType:"json", 
+            success:function(data){
+                $(jango).replaceWith(data)
+            }
+        })
+    }
+    });
+    // $("#submit").on("load",function(){
+    //     var sel=$("#cameras").select2('val')
+    //     $.ajax({
+    //         url:"/update",
+    //         type:"POST",
+    //         data:{"selection":sel},
+    //         dataType:"json", 
+    //         success:function(data){
+    //             $(jango).replaceWith(data)
+    //         }
+    //     })
+    // })
+
+function myFunction(){
+    var intrusion_var,camerafault_var,raised_var, intrusion_filter,camerafault_filter,raised_filter, table, tr, td, i, txtValue;
+    intrusion_var = 0;
+    camerafault_var = 0;
+    raised_var = 0;
+    intrusion_filter = 'intrusion';
+    camerafault_filter = 'camerafault';
+    raised_filter = 'raised';
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[1];
+        td2 = tr[i].getElementsByTagName("td")[4]
+        if (td && tr[i].style.display!="none") {
+            txtValue = td.textContent || td.innerText;
+            txtValue2 = td2.textContent || td2.innerText;
+            if (txtValue2.toUpperCase().indexOf(raised_filter.toUpperCase()) > -1) {
+            raised_var+=1;
+            } 
+            if (txtValue.toUpperCase().indexOf(intrusion_filter.toUpperCase()) > -1) {
+            intrusion_var+=1;
+            } 
+            if (txtValue.toUpperCase().indexOf(camerafault_filter.toUpperCase()) > -1) {
+            camerafault_var+=1;
+            }
+        }         
+    }
+    $("#intrusion").text(intrusion_var)
+    $("#camerafault").text(camerafault_var)
+    $("#raised").text(raised_var)
+}
+
+function searchFunction() {
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tr = table.getElementsByTagName("tr");
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[2];
+    if (td) {
+        txtValue = td.textContent || td.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+        } else {
+            tr[i].style.display = "none";
+        }
+    }       
+  }
+}    
+</script>
+<!-- TILL HERE -->
+
+
