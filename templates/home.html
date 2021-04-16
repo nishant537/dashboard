@@ -29,7 +29,7 @@
         </div>    
 
         <div style="padding: 2%;">
-            <input type="text" id="myInput" onkeyup="searchFunction()" placeholder="Search for camera.." title="Type in a name">
+            <input type="text" id="myInput" onkeyup="searchFunction();myFunction()" placeholder="Search for camera.." title="Type in a name">
         </div>
 
         <!-- <form method="POST">
@@ -45,7 +45,34 @@
 
         <div style="clear: left;" class="jango">
             <div id="jango">
-                ""
+                <div>
+                    <h1>
+                        ALERTS DASHBOARD
+                    </h1>
+            
+                    <div id="table-wrapper">
+                        <div id="table-scroll">
+                            <table class="table" id="myTable">
+                                <thead>
+                                    <tr>
+                                        {% for header in headings %}
+                                        <th>{{header}}</th>
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in data %}
+                                    <tr>
+                                        {%for cell in row%}
+                                        <td>{{cell}}</td>
+                                        {%endfor%}
+                                    </tr>
+                                    {%endfor%}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <!-- <input type="text" id="hiInput" onkeyup="myFunction()" placeholder="myFunction.." title="Type in a name"> -->
@@ -63,24 +90,31 @@
 
 <script>
     
+    document.addEventListener(onload,myFunction())
+
     $(function(){
         window.setInterval(function(){
-            update(),myFunction()
-        },1000)
-    var sel=document.getElementById('camerass').selectedOptions[0].value;
-    console.log(sel)
+            update()
+        },60000)
     function update(){
         $.ajax({
             url:"/update",
             type:"POST",
-            data:{'selection':sel},
             dataType:"json", 
             success:function(data){
-                $(jango).replaceWith(data)
+                $(jango).empty()
+                $(jango).append(data)
             }
         })
     }
     });
+
+    $(function(){
+        window.setInterval(function(){
+            myFunction()
+        },62000)
+    });
+
     // $("#submit").on("load",function(){
     //     var sel=$("#cameras").select2('val')
     //     $.ajax({

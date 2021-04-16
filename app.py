@@ -13,19 +13,23 @@ headings=('Id','alert_object','camera_name','alert_timestamp','status')
 
 @app.route('/',methods=['GET','POST'])
 def home():
-    if request.method=='POST':
-        selected=request.form["cameras"]
-        with open('hi.txt','w') as file:
-            file.write(selected)
-    return render_template('home.html')
+    db=mdb.connect(host='localhost', user= 'root', passwd='nishant1234',db='alerts_db')
+    cur=db.cursor()
+    cur.execute('select table_1.id,table_1.alert_object,table_2.json,table_1.alert_timestamp,table_1.status from alerts_db.alertstable table_1 join camdb.camtable table_2 on table_1.camera_id=table_2.id order by table_1.alert_timestamp desc;')
+    a=cur.fetchall()
+    data=[list(i) for i in list(a)]
+    for i in range(len(data)):
+        data[i][2]=json.loads(data[i][2])['camera_name']
+
+    return render_template('home.html',data=data,headings=headings)
 
 @app.route('/update',methods=['GET','POST'])    
 def update():
-    selection=request.get_data('selection')
-    print(selection)
+    # selection=request.get_data('selection')
+    # print(selection)
     db=mdb.connect(host='localhost', user= 'root', passwd='nishant1234',db='alerts_db')
     cur=db.cursor()
-    cur.execute('select table_1.id,table_1.alert_object,table_2.json,table_1.alert_timestamp,table_1.status from alerts_db.alertstable table_1 join camdb.camtable table_2 on table_1.camera_id=table_2.id;')
+    cur.execute('select table_1.id,table_1.alert_object,table_2.json,table_1.alert_timestamp,table_1.status from alerts_db.alertstable table_1 join camdb.camtable table_2 on table_1.camera_id=table_2.id order by table_1.alert_timestamp desc;')
     a=cur.fetchall()
     data=[list(i) for i in list(a)]
     for i in range(len(data)):
